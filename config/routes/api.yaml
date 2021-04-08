@@ -1,0 +1,3 @@
+HealthCheck:
+    resource: ../../src/Modules/HealthCheck/Controller
+    type: annotation

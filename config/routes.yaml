@@ -1,0 +1,7 @@
+api_routing:
+    resource: "routes/api.yaml"
+    prefix:      /api
+    name_prefix: api_
+
+docs:
+    resource: "routes/nelmio_api_doc.yaml"

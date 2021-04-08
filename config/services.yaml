@@ -1,0 +1,22 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+            - '../src/*/Message/Command/*'
+            - '../src/*/Message/Query/*'
+            - '../src/*/Message/Event/*'
+            - '../src/*/Message/Response/*'
+
+    Fusonic\HttpKernelExtensions\Controller\RequestDtoResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 50 }

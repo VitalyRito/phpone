@@ -1,0 +1,51 @@
+version: '3.8'
+
+networks:
+    rito-network:
+        external: true
+
+services:
+    db:
+        container_name: db
+        networks:
+            - rito-network
+        image: postgres:12
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: dbtest
+        ports:
+            - 15432:5432
+
+    php-fpm:
+        container_name: php-fpm
+        networks:
+            - rito-network
+        expose:
+            - 80
+        build:
+            context: docker/php-fpm
+        depends_on:
+            - db
+        environment:
+            - APP_ENV=${APP_ENV}
+            - APP_SECRET=${APP_SECRET}
+            - DATABASE_URL=${DATABASE_URL}
+        volumes:
+            - ./:/var/www/rito_backend:rw
+
+    nginx:
+        image: nginx:1.17.3
+        container_name: nginx
+        restart: unless-stopped
+        networks:
+            - rito-network
+        ports:
+            - "127.0.0.20:80:80"
+            - "127.0.0.20:443:443"
+        volumes:
+            - ./:/var/www/rito_backend:ro
+            - ./docker/nginx/conf.d.dev/:/etc/nginx/conf.d
+        depends_on:
+            - php-fpm
+        command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
